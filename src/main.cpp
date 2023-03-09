@@ -54,6 +54,10 @@ int main() {
           i2c.write(adresse_i2c_8bits, cmd, 1);
           printf("Envoi de %d a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
           ThisThread::sleep_for(200ms);
+
+          //i2c.read(adresse_i2c_8bits, message, sizeof(message));
+          printf("Reception du message %s de l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", message, adresse_i2c_8bits, adresse_i2c_7bits);
+          ThisThread::sleep_for(200ms);
       }
   }
 
