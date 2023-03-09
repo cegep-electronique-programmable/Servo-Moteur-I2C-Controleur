@@ -42,7 +42,7 @@ int main() {
   led3 = 0;
   led4 = 0;
 
-  const int adresse_i2c_7bits = 0x01;
+  const int adresse_i2c_7bits = 0x23;
   const int adresse_i2c_8bits = adresse_i2c_7bits << 1; // Nécessairement pair
 
   char cmd[1];
