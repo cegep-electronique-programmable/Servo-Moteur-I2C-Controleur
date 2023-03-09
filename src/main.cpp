@@ -9,7 +9,6 @@ DigitalOut led2(LED2);
 DigitalOut led3(LED3);
 DigitalOut led4(LED4);
 
-
 int main() {
   printf("Debut du programme\r\n");
 
@@ -48,47 +47,28 @@ int main() {
   char cmd[1];
   char message[10];
 
-  int8_t sequence_moteur[] = {0, -90, -45, 45, 0, 90, 45, -45, 0};
+  // On utilise la valeur 125 pour faire une lecture I2C
+  int8_t sequence_moteur[] = {127, 126, -90, 125, -45, 45, 0, 125, 90, 120, 125, 0, 127, 125};
 
   while(1) {
-      for (int i = 0; i < sizeof(sequence_moteur); i++) {
-          cmd[0] = sequence_moteur[i];
-          i2c.write(adresse_i2c_8bits, cmd, 1);
-          printf("Moteur en position %d° a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
-          ThisThread::sleep_for(1000ms);
 
-          //i2c.read(adresse_i2c_8bits, message, sizeof(message));
-          //printf("Reception du message %s de l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", message, adresse_i2c_8bits, adresse_i2c_7bits);
-          //ThisThread::sleep_for(200ms);
+      // Pour chaque position du moteur
+      for (uint8_t i = 0; i < sizeof(sequence_moteur); i++) {
+          if (sequence_moteur[i] == 125) {
+              // On lit la position du moteur
+              //i2c.read(adresse_i2c_8bits, message, sizeof(message)); // TODO: Bug in slave when reading
+              printf("Etat moteur %s.\r\n", message);
+          } else {
+            // Écrire la position dans un tableau
+            cmd[0] = sequence_moteur[i];
+            // Envoyer le premier octet du tableau à l'adresse I2C
+            i2c.write(adresse_i2c_8bits, cmd, 1);
+            printf("Moteur en position %d° a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
+            ThisThread::sleep_for(1000ms);
+          }
       }
+
   }
 
-
-  while(1) {
-    for (int i = 0; i < 0x100; i++) {
-      cmd[0] = i;
-      
-      i2c.write(0, cmd, 1);
-      printf("Envoi de %d à l'adresse 0x00.\r\n", i);
-      ThisThread::sleep_for(500ms);
-
-      i2c.write(i, cmd, 1);
-      printf("Envoi de %d à l'adresse 0x%2X.\r\n", i, i);
-      ThisThread::sleep_for(500ms);
-
-      i2c.read(i, message, sizeof(message));
-      printf("Message reçu: %s", message);
-      ThisThread::sleep_for(500ms);
-    }
-
-    //cmd[0] = 45; // Envoyer le moteur à la position 45°
-    //i2c.write(addr8bit, cmd, 1);
-
-    //ThisThread::sleep_for(1000);
-
-    //i2c.read(addr8bit, message, sizeof(message));
-    //printf("Message reçu: %s", message);
-
-    //ThisThread::sleep_for(1000);
-  }
+  
 }
