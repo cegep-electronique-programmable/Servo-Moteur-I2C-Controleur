@@ -4,8 +4,48 @@
 
 I2C i2c(I2C_SDA, I2C_SCL);
 
+DigitalOut led1(LED1);
+DigitalOut led2(LED2);
+DigitalOut led3(LED3);
+DigitalOut led4(LED4);
+
+
 int main() {
   printf("Début du programme\r\n");
+
+  led1 = 1;
+  led2 = 0;
+  led3 = 0;
+  led4 = 0;
+  ThisThread::sleep_for(200ms);
+
+  led1 = 0;
+  led2 = 1;
+  led3 = 0;
+  led4 = 0;
+  ThisThread::sleep_for(200ms);
+
+  led1 = 0;
+  led2 = 0;
+  led3 = 1;
+  led4 = 0;
+  ThisThread::sleep_for(200ms);
+
+  led1 = 0;
+  led2 = 0;
+  led3 = 0;
+  led4 = 1;
+  ThisThread::sleep_for(200ms);
+
+  led1 = 0;
+  led2 = 0;
+  led3 = 0;
+  led4 = 0;
+
+
+
+
+
   const int addr8bit = ADDRESSE_I2C_PAR_DEFAUT << 1;
 
   char cmd[1];
