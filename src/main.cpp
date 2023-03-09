@@ -55,7 +55,7 @@ int main() {
     for (int i = 0; i < 0x100; i++) {
       cmd[0] = i;
       i2c.write(addr8bit, cmd, 1);
-      printf("Envoi de %d à l'adresse %d.\r\n", i, addr8bit);
+      printf("Envoi de %d à l'adresse 0x%2X.\r\n", i, addr8bit);
       ThisThread::sleep_for(500ms);
     }
 
