@@ -11,7 +11,7 @@ DigitalOut led4(LED4);
 
 
 int main() {
-  printf("Début du programme\r\n");
+  printf("Debut du programme\r\n");
 
   led1 = 1;
   led2 = 0;
@@ -42,20 +42,36 @@ int main() {
   led3 = 0;
   led4 = 0;
 
-
-
-
-
-  const int addr8bit = ADDRESSE_I2C_PAR_DEFAUT << 1;
+  const int adresse_i2c_7bits = 0x01;
+  const int adresse_i2c_8bits = adresse_i2c_7bits << 1; // Nécessairement pair
 
   char cmd[1];
   char message[10];
 
   while(1) {
+      for (int i = 0; i < 0x100; i++) {
+          cmd[0] = i;
+          i2c.write(adresse_i2c_8bits, cmd, 1);
+          printf("Envoi de %d a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
+          ThisThread::sleep_for(200ms);
+      }
+  }
+
+
+  while(1) {
     for (int i = 0; i < 0x100; i++) {
       cmd[0] = i;
-      i2c.write(addr8bit, cmd, 1);
-      printf("Envoi de %d à l'adresse 0x%2X.\r\n", i, addr8bit);
+      
+      i2c.write(0, cmd, 1);
+      printf("Envoi de %d à l'adresse 0x00.\r\n", i);
+      ThisThread::sleep_for(500ms);
+
+      i2c.write(i, cmd, 1);
+      printf("Envoi de %d à l'adresse 0x%2X.\r\n", i, i);
+      ThisThread::sleep_for(500ms);
+
+      i2c.read(i, message, sizeof(message));
+      printf("Message reçu: %s", message);
       ThisThread::sleep_for(500ms);
     }
 
