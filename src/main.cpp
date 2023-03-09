@@ -48,16 +48,18 @@ int main() {
   char cmd[1];
   char message[10];
 
+  int8_t sequence_moteur[] = {0, -90, -45, 45, 0, 90, 45, -45, 0};
+
   while(1) {
-      for (int i = 0; i < 0x100; i++) {
-          cmd[0] = i;
+      for (int i = 0; i < sizeof(sequence_moteur); i++) {
+          cmd[0] = sequence_moteur[i];
           i2c.write(adresse_i2c_8bits, cmd, 1);
-          printf("Envoi de %d a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
-          ThisThread::sleep_for(200ms);
+          printf("Moteur en position %d° a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
+          ThisThread::sleep_for(1000ms);
 
           //i2c.read(adresse_i2c_8bits, message, sizeof(message));
-          printf("Reception du message %s de l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", message, adresse_i2c_8bits, adresse_i2c_7bits);
-          ThisThread::sleep_for(200ms);
+          //printf("Reception du message %s de l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", message, adresse_i2c_8bits, adresse_i2c_7bits);
+          //ThisThread::sleep_for(200ms);
       }
   }
 
