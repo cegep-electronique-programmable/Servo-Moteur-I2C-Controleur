@@ -48,7 +48,9 @@ int main() {
   char message[10];
 
   // On utilise la valeur 125 pour faire une lecture I2C
-  int8_t sequence_moteur[] = {127, 126, -90, 125, -45, 45, 0, 125, 90, 120, 125, 0, 127, 125};
+  int8_t sequence_moteur[] = {127, 126, -90, 125, -45, 0, 125, 45, 90, 45, 125, 0, -45, -90};
+  //int8_t sequence_moteur[] = {127, 0, 125, 0, 0, 0, 0, 0, 0, 0, 0};
+  //int8_t sequence_moteur[] = {126, 10, 20, 125, 30, 40, 125};
 
   while(1) {
 
@@ -56,18 +58,32 @@ int main() {
       for (uint8_t i = 0; i < sizeof(sequence_moteur); i++) {
           if (sequence_moteur[i] == 125) {
               // On lit la position du moteur
-              //i2c.read(adresse_i2c_8bits, message, sizeof(message)); // TODO: Bug in slave when reading
-              printf("Etat moteur %s.\r\n", message);
+              if (i2c.read(adresse_i2c_8bits, message, sizeof(message))) { // TODO: Bug in slave when reading
+                  printf("Erreur de lecture I2C.\r\n");
+              }
+              else {
+                  printf("Etat moteur %s.\r\n", message);
+              }
+
+              // On vide le tableau
+              for (uint8_t j = 0; j < sizeof(message); j++) {
+                  message[j] = 0;
+              }
           } else {
             // Écrire la position dans un tableau
             cmd[0] = sequence_moteur[i];
             // Envoyer le premier octet du tableau à l'adresse I2C
-            i2c.write(adresse_i2c_8bits, cmd, 1);
-            printf("Moteur en position %d° a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
-            ThisThread::sleep_for(1000ms);
+            if (i2c.write(adresse_i2c_8bits, cmd, 1)) {
+              printf("Erreur d'ecriture I2C.\r\n");
+            }
+            else {
+                printf("Moteur en position %d° a l'adresse 0x%02X sur 8 bits (ou 0x%02X en 7 bits).\r\n", cmd[0], adresse_i2c_8bits, adresse_i2c_7bits);
+            }
+            
           }
+          
+            ThisThread::sleep_for(1000ms);
       }
-
   }
 
   
